@@ -213,6 +213,12 @@
       transition: aspect-ratio .4s var(--ease);
     }
     .media.is-playing { aspect-ratio: 9 / 16; width: min(100%, calc(82svh * 9 / 16)); }
+    /* Vidéo classique (non-Short) : cadre 16:9 */
+    .media.is-landscape,
+    .media.is-landscape.is-playing { aspect-ratio: 16 / 9; width: 100%; }
+    .media.is-landscape .poster-title { font-size: 18px; -webkit-line-clamp: 2; }
+    .chip[hidden] { display: none; }
+    .thumb-img.is-landscape { background-size: auto 100%; }
     .media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     .poster {
       position: absolute; inset: 0; width: 100%; height: 100%;
@@ -532,8 +538,8 @@
         <div class="media" id="player" data-video-id="q4iPOxxUFI4">
           <button class="poster" type="button" id="poster" aria-label="Lire la vidéo">
             <span class="poster-top">
-              <span class="chip chip-accent">Nouveau</span>
-              <span class="chip chip-glass"><svg aria-hidden="true"><use href="#i-clock"/></svg>1 min</span>
+              <span class="chip chip-accent" id="chip-new">Nouveau</span>
+              <span class="chip chip-glass" id="chip-dur"><svg aria-hidden="true"><use href="#i-clock"/></svg>1 min</span>
             </span>
             <span class="poster-body">
               <span class="poster-title" id="feat-title">Vous le saviez qu'auparavant Coca-Cola était un médicament ? 🥤</span>
@@ -651,13 +657,28 @@
       const titleEl = $('#feat-title');
       const dateEl = $('#feat-date');
       const rail = $('#rail');
-      let current = player.dataset.videoId;
+      const badgeNew = $('#chip-new');
+      const badgeDur = $('#chip-dur');
+      let current = player.dataset.videoId;   // vidéo de secours (affichée tant que le flux n'a pas répondu)
+      let latestId = null;
+      let lastFetch = 0;
 
-      const thumb = (vid, cb) => {
+      /* Format détecté via la miniature « oardefault » (ratio d'origine) :
+         verticale = Short (9:16), sinon vidéo classique (16:9). Résultat mis en cache. */
+      const formats = new Map();
+      const probe = vid => formats.get(vid) || formats.set(vid, new Promise(res => {
         const img = new Image();
-        img.onload = () => cb(img.src);
-        img.onerror = () => cb(`https://i.ytimg.com/vi/${vid}/hqdefault.jpg`);
-        img.src = `https://i.ytimg.com/vi/${vid}/oardefault.jpg`;   // vertical 1080×1920
+        img.onload = () => res(img.naturalHeight > img.naturalWidth
+          ? { short: true, src: img.src }
+          : { short: false, src: `https://i.ytimg.com/vi/${vid}/hq720.jpg` });
+        img.onerror = () => res({ short: false, src: `https://i.ytimg.com/vi/${vid}/hq720.jpg` });
+        img.src = `https://i.ytimg.com/vi/${vid}/oardefault.jpg`;
+      })).get(vid);
+      const thumb = (vid, cb) => probe(vid).then(f => cb(f.src, f));
+
+      const applyFormat = f => {
+        player.classList.toggle('is-landscape', !f.short);
+        badgeDur.hidden = !f.short;
       };
       const cleanTitle = t => t.replace(/\s*#[^\s#]+/g, '').trim();
       const toDate = s => new Date(/[zZ+]/.test(s.slice(10)) ? s : s.replace(' ', 'T') + 'Z');
@@ -677,13 +698,24 @@
       const show = item => {
         resetPlayer();
         current = item.id;
-        thumb(item.id, src => { poster.style.backgroundImage = `url(${src})`; });
+        thumb(item.id, (src, f) => {
+          if (current !== item.id) return;
+          poster.style.backgroundImage = `url(${src})`;
+          applyFormat(f);
+        });
         titleEl.textContent = item.title;
-        if (item.date) dateEl.textContent = `Publié ${ago(item.date)}`;
+        if (item.date) {
+          dateEl.textContent = `Publié ${ago(item.date)}`;
+          badgeNew.hidden = Date.now() - toDate(item.date) > 7 * 86400e3;   // « Nouveau » pendant 7 jours
+        }
         rail.querySelectorAll('.thumb').forEach(b => b.setAttribute('aria-current', b.dataset.id === item.id));
       };
 
-      thumb(current, src => { poster.style.backgroundImage = `url(${src})`; });
+      // Dernière vidéo connue (visite précédente) > vidéo de secours codée en dur
+      try {
+        const cached = JSON.parse(localStorage.getItem('heinfo:latest') || 'null');
+        if (cached?.id) show(cached); else show({ id: current, title: titleEl.textContent });
+      } catch { show({ id: current, title: titleEl.textContent }); }
 
       poster.addEventListener('click', () => {
         const f = document.createElement('iframe');
@@ -696,18 +728,25 @@
         poster.replaceWith(f);
       });
 
+      /* ---------- Flux RSS YouTube via rss2json ---------- */
       const feed = `https://www.youtube.com/feeds/videos.xml?channel_id=${CONFIG.channelId}`;
-      fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`, { signal: AbortSignal.timeout?.(6000) })
+      const loadFeed = () => {
+        lastFetch = Date.now();
+        return fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`, { signal: AbortSignal.timeout?.(6000) })
         .then(r => r.json())
         .then(data => {
+          if (data.status !== 'ok') return;
           const items = (data.items || []).map(v => ({
             id: v.guid?.split(':').pop() || v.link?.match(/(?:v=|shorts\/)([\w-]{11})/)?.[1],
             title: cleanTitle(v.title || ''),
             date: v.pubDate
-          })).filter(i => i.id);
-          if (!items.length) return;
+          })).filter(i => /^[\w-]{11}$/.test(i.id || ''));
+          if (!items.length || items[0].id === latestId) return;   // rien de nouveau
+          latestId = items[0].id;
+          try { localStorage.setItem('heinfo:latest', JSON.stringify(items[0])); } catch {}
 
           $('#announce-time').textContent = `Publié ${ago(items[0].date)}`;
+          // Ne coupe jamais une vidéo en cours de lecture
           if (!player.querySelector('iframe')) show(items[0]);
 
           const list = items.slice(0, 7);
@@ -719,7 +758,11 @@
             b.setAttribute('aria-label', `Lire : ${it.title}`);
             b.innerHTML = `<div class="thumb-img"></div><p class="thumb-title"></p>`;
             b.querySelector('.thumb-title').textContent = it.title;
-            thumb(it.id, src => { b.querySelector('.thumb-img').style.backgroundImage = `url(${src})`; });
+            thumb(it.id, (src, f) => {
+              const el = b.querySelector('.thumb-img');
+              el.style.backgroundImage = `url(${src})`;
+              el.classList.toggle('is-landscape', !f.short);
+            });
             b.addEventListener('click', () => {
               show(it);
               player.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -729,6 +772,14 @@
           $('#recent').hidden = list.length < 2;
         })
         .catch(() => {});   // flux injoignable : la vidéo de secours reste affichée
+      };
+
+      loadFeed();
+      // Page restée ouverte : nouvelle vérification toutes les 10 min, et au retour sur l'onglet
+      setInterval(() => { if (!document.hidden) loadFeed(); }, 10 * 60e3);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && Date.now() - lastFetch > 5 * 60e3) loadFeed();
+      });
 
       /* ---------- Deep linking vers les apps natives ---------- */
       const ua = navigator.userAgent;
