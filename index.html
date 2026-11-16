@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>(hein)fo — L'info avec un grand HEIN ?</title>
+  <meta name="description" content="(hein)fo : décryptages courts, clairs et sourcés en 1 minute. Ton allié pour une culture générale solide, sur YouTube Shorts, TikTok et Instagram.">
+  <meta name="theme-color" content="#0D0D11">
+  <meta name="color-scheme" content="dark">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="(hein)fo">
+  <meta property="og:title" content="(hein)fo — L'info avec un grand HEIN ?">
+  <meta property="og:description" content="Décryptages courts, clairs et sourcés en 1 min. Ton allié pour une culture générale solide.">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%230D0D11'/%3E%3Cpath d='M25 15c-9 10-9 24 0 34M39 15c9 10 9 24 0 34' stroke='%23F1FF0A' stroke-width='7' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://i.ytimg.com">
+  <link rel="preconnect" href="https://api.rss2json.com" crossorigin>
+
+  <style>
+    /* =========================================================
+       Design tokens — DA (hein)fo : noir #0D0D11 / jaune #F1FF0A
+       ========================================================= */
+    :root {
+      --bg: #0D0D11;
+      --surface: #131318;
+      --surface-2: #19191F;
+      --surface-3: #202028;
+      --border: rgba(255, 255, 255, .07);
+      --border-strong: rgba(255, 255, 255, .13);
+      --text: #F3F3EF;
+      --text-2: #A3A3AD;
+      --text-3: #6E6E78;
+      --accent: #F1FF0A;
+      --accent-ink: #0D0D11;
+      --accent-a10: rgba(241, 255, 10, .10);
+      --accent-a25: rgba(241, 255, 10, .25);
+
+      --font-display: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+      --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+      --r-lg: 22px;
+      --r-md: 16px;
+      --r-sm: 12px;
+      --ease: cubic-bezier(.22, .8, .24, 1);
+      --gutter: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      font: 400 15px/1.55 var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    /* halo + grain très discrets */
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(42rem 26rem at 50% -10rem, rgba(241, 255, 10, .07), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+    img, svg { display: block; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+    ::selection { background: var(--accent); color: var(--accent-ink); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    /* =========================================================
+       Layout
+       ========================================================= */
+    .page {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: max(16px, env(safe-area-inset-top)) var(--gutter) max(32px, env(safe-area-inset-bottom));
+      display: grid;
+      gap: 40px;
+      grid-template-areas: "hero" "feature" "values" "platforms" "contact" "footer";
+    }
+    .hero      { grid-area: hero; }
+    .feature   { grid-area: feature; }
+    .values    { grid-area: values; }
+    .platforms { grid-area: platforms; }
+    .contact   { grid-area: contact; }
+    .footer    { grid-area: footer; }
+
+    .section-head {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+      margin: 0 0 14px;
+    }
+    .eyebrow {
+      margin: 0;
+      font: 800 12px/1 var(--font-display);
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--text-3);
+    }
+    .link-more {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 13px; font-weight: 600; color: var(--text-2);
+      transition: color .2s var(--ease);
+    }
+    .link-more:hover { color: var(--accent); }
+    .link-more svg { width: 14px; height: 14px; }
+
+    /* =========================================================
+       Hero
+       ========================================================= */
+    .hero { position: relative; text-align: center; padding-top: 52px; }
+    .share {
+      position: absolute; top: 0; right: 0;
+      width: 40px; height: 40px; border-radius: 50%;
+      display: grid; place-items: center;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-2);
+      transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+    }
+    .share:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+    .share svg { width: 18px; height: 18px; }
+
+    .announce {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 28px;
+      padding: 5px 12px 5px 6px;
+      border: 1px solid var(--border); border-radius: 999px;
+      background: var(--surface);
+      font-size: 13px; color: var(--text-2);
+      transition: border-color .2s var(--ease), background .2s var(--ease);
+    }
+    .announce:hover { border-color: var(--accent-a25); background: var(--surface-2); }
+    .announce .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 9px; border-radius: 999px;
+      background: var(--accent-a10); color: var(--accent);
+      font: 800 11px/1.4 var(--font-display); letter-spacing: .06em; text-transform: uppercase;
+    }
+    .announce .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2.2s infinite; }
+    .announce svg { width: 14px; height: 14px; color: var(--text-3); }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(241, 255, 10, .55); }
+      70% { box-shadow: 0 0 0 6px rgba(241, 255, 10, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(241, 255, 10, 0); }
+    }
+
+    .logo { width: min(236px, 64vw); height: auto; margin: 0 auto; }
+    .headline {
+      margin: 22px 0 0;
+      font: 900 clamp(26px, 7.4vw, 34px)/1.08 var(--font-display);
+      letter-spacing: -.02em;
+    }
+    .headline em { font-style: normal; color: var(--accent); white-space: nowrap; }
+    .lede {
+      margin: 12px auto 0; max-width: 34ch;
+      font-size: 15.5px; color: var(--text-2);
+    }
+
+    .hero-actions { display: grid; gap: 14px; justify-items: center; margin-top: 26px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      height: 50px; padding: 0 22px; border-radius: 999px;
+      font: 800 15px/1 var(--font-display); letter-spacing: .01em;
+      transition: transform .18s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease), color .2s var(--ease);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 6px 24px -8px rgba(241, 255, 10, .55); }
+    .btn-primary:hover { box-shadow: 0 10px 32px -8px rgba(241, 255, 10, .7); }
+    .btn-block { width: 100%; }
+
+    .socials { display: flex; gap: 10px; }
+    .social-btn {
+      width: 46px; height: 46px; border-radius: 50%;
+      display: grid; place-items: center;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-2);
+      transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease), transform .18s var(--ease);
+    }
+    .social-btn:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+    .social-btn:active { transform: scale(.94); }
+    .social-btn svg { width: 20px; height: 20px; }
+
+    /* =========================================================
+       À la une
+       ========================================================= */
+    .feature-card {
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      background: var(--surface);
+      padding: 8px;
+    }
+    .media {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      /* jamais plus haut que l'écran (téléphone à l'horizontale, petits laptops) */
+      width: min(100%, calc(82svh * 4 / 5));
+      margin-inline: auto;
+      border-radius: calc(var(--r-lg) - 8px);
+      overflow: hidden;
+      background: #000;
+      transition: aspect-ratio .4s var(--ease);
+    }
+    .media.is-playing { aspect-ratio: 9 / 16; width: min(100%, calc(82svh * 9 / 16)); }
+    .media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .poster {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      text-align: left;
+      background: #0b0b0e center 30% / cover no-repeat;
+      transition: transform .6s var(--ease);
+    }
+    .poster::after {
+      content: ""; position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(13, 13, 17, .55) 0%, transparent 22%),
+        linear-gradient(0deg, rgba(13, 13, 17, .96) 0%, rgba(13, 13, 17, .7) 30%, transparent 62%);
+    }
+    .poster-top {
+      position: absolute; z-index: 1; top: 14px; left: 14px; right: 14px;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 26px; padding: 0 10px; border-radius: 999px;
+      font: 800 11px/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .chip-accent { background: var(--accent); color: var(--accent-ink); }
+    .chip-glass { background: rgba(13, 13, 17, .55); color: var(--text); border: 1px solid rgba(255, 255, 255, .1); }
+    .chip svg { width: 12px; height: 12px; }
+
+    .poster-body { position: absolute; z-index: 1; left: 18px; right: 18px; bottom: 18px; }
+    .poster-title {
+      margin: 0;
+      font: 900 21px/1.18 var(--font-display);
+      letter-spacing: -.01em;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .poster-meta { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+    .play {
+      width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center;
+      background: var(--accent); color: var(--accent-ink);
+      transition: transform .25s var(--ease);
+    }
+    .play svg { width: 18px; height: 18px; margin-left: 2px; }
+    .poster:hover .play { transform: scale(1.08); }
+    .poster-meta span { font-size: 13px; color: var(--text-2); }
+    .poster-meta strong { display: block; color: var(--text); font-weight: 600; font-size: 14px; }
+
+    /* Derniers épisodes */
+    .recent { margin-top: 18px; }
+    .recent[hidden] { display: none; }
+    .recent .eyebrow { margin: 0 4px 12px; }
+    .rail {
+      display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 20px) / 3.15);
+      gap: 10px;
+      overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+      margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) 2px;
+    }
+    .rail::-webkit-scrollbar { display: none; }
+    .thumb { scroll-snap-align: start; text-align: left; }
+    .thumb-img {
+      position: relative;
+      aspect-ratio: 9 / 16; border-radius: var(--r-sm); overflow: hidden;
+      background: var(--surface-2) center / cover no-repeat;
+      border: 1px solid var(--border);
+      transition: border-color .2s var(--ease), transform .25s var(--ease);
+    }
+    .thumb:hover .thumb-img { border-color: var(--border-strong); }
+    .thumb:active .thumb-img { transform: scale(.97); }
+    .thumb[aria-current="true"] .thumb-img { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .thumb-title {
+      margin: 8px 2px 0; font-size: 12.5px; line-height: 1.35; color: var(--text-2);
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    /* =========================================================
+       Valeurs
+       ========================================================= */
+    .values-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border); border-radius: var(--r-lg);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .value { padding: 18px 14px; }
+    .value + .value { border-left: 1px solid var(--border); }
+    .value svg { width: 22px; height: 22px; color: var(--accent); }
+    .value strong { display: block; margin-top: 14px; font: 900 18px/1.1 var(--font-display); letter-spacing: -.01em; }
+    .value span { display: block; margin-top: 4px; font-size: 12.5px; line-height: 1.4; color: var(--text-2); }
+
+    /* =========================================================
+       Plateformes
+       ========================================================= */
+    .platform-note { margin: -6px 0 14px; font-size: 14px; color: var(--text-2); }
+    .list {
+      border: 1px solid var(--border); border-radius: var(--r-lg);
+      background: var(--surface); overflow: hidden;
+    }
+    .row {
+      display: flex; align-items: center; gap: 14px;
+      min-height: 72px; padding: 12px 16px;
+      transition: background .2s var(--ease);
+    }
+    .row + .row { border-top: 1px solid var(--border); }
+    .row:hover { background: var(--surface-2); }
+    .row-ico {
+      width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0;
+      display: grid; place-items: center;
+      background: var(--surface-3); color: var(--text);
+      border: 1px solid var(--border);
+      transition: color .2s var(--ease), background .2s var(--ease);
+    }
+    .row-ico svg { width: 21px; height: 21px; }
+    .row-text { min-width: 0; flex: 1; }
+    .row-text strong { display: block; font-weight: 650; font-size: 15px; }
+    .row-text span { display: block; font-size: 13px; color: var(--text-3); }
+    .row-end { display: inline-flex; align-items: center; color: var(--text-3); transition: transform .2s var(--ease), color .2s var(--ease); }
+    .row-end svg { width: 18px; height: 18px; }
+    .row:hover .row-end { color: var(--text); transform: translateX(2px); }
+    .pill-sub {
+      height: 34px; padding: 0 14px; border-radius: 999px;
+      display: inline-flex; align-items: center;
+      background: var(--accent); color: var(--accent-ink);
+      font: 800 13px/1 var(--font-display);
+    }
+    .row:hover .pill-sub { transform: none; }
+    .row[data-app="youtube"]:hover .row-ico { color: #fff; background: #ff0033; }
+    .row[data-app="tiktok"]:hover .row-ico { color: #fff; background: #000; }
+    .row[data-app="instagram"]:hover .row-ico { color: #fff; background: linear-gradient(45deg, #f9ce34, #ee2a7b 50%, #6228d7); }
+
+    /* =========================================================
+       Contact
+       ========================================================= */
+    .contact-card {
+      border: 1px solid var(--border); border-radius: var(--r-lg);
+      background:
+        radial-gradient(24rem 12rem at 100% 0%, rgba(241, 255, 10, .06), transparent 70%),
+        var(--surface);
+      padding: 22px 18px 18px;
+    }
+    .contact-card h3 { margin: 0; font: 900 22px/1.15 var(--font-display); letter-spacing: -.01em; }
+    .contact-card p { margin: 8px 0 0; color: var(--text-2); font-size: 14.5px; }
+    .email-field {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 18px; padding: 6px 6px 6px 16px;
+      border: 1px solid var(--border-strong); border-radius: 999px;
+      background: var(--bg);
+    }
+    .email-field .addr { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; font-size: 14.5px; }
+    .copy {
+      height: 40px; padding: 0 16px; border-radius: 999px; flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--accent); color: var(--accent-ink);
+      font: 800 13.5px/1 var(--font-display);
+      transition: background .25s var(--ease), color .25s var(--ease), transform .18s var(--ease);
+    }
+    .copy:active { transform: scale(.96); }
+    .copy svg { width: 16px; height: 16px; }
+    .copy .i-ok { display: none; }
+    .copy.done { background: var(--surface-3); color: var(--accent); }
+    .copy.done .i-copy { display: none; }
+    .copy.done .i-ok { display: block; }
+    .mailto { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; margin-left: 4px; font-size: 13px; color: var(--text-2); }
+    .mailto:hover { color: var(--text); }
+    .mailto svg { width: 14px; height: 14px; }
+
+    /* =========================================================
+       Footer & toast
+       ========================================================= */
+    .footer {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding-top: 20px; border-top: 1px solid var(--border);
+      font-size: 12.5px; color: var(--text-3);
+    }
+    .footer svg { width: 54px; height: auto; opacity: .9; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom));
+      transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+      padding: 10px 16px; border-radius: 999px;
+      background: var(--text); color: var(--bg);
+      font-weight: 600; font-size: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+      transition: opacity .25s var(--ease), transform .25s var(--ease);
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* =========================================================
+       Motion
+       ========================================================= */
+    .reveal { animation: rise .7s var(--ease) both; }
+    .reveal:nth-child(2) { animation-delay: .06s; }
+    .reveal:nth-child(3) { animation-delay: .12s; }
+    .reveal:nth-child(4) { animation-delay: .18s; }
+    .reveal:nth-child(5) { animation-delay: .24s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+
+    /* =========================================================
+       Desktop : deux colonnes
+       ========================================================= */
+    /* Très petits écrans (iPhone SE 1re gén., Galaxy Fold replié) */
+    @media (max-width: 359px) {
+      :root { --gutter: 12px; }
+      .value { padding: 16px 10px; }
+      .value strong { font-size: 15px; white-space: nowrap; }
+      .value span { font-size: 11.5px; }
+      .announce { font-size: 12px; gap: 8px; }
+      .poster-title { font-size: 18px; }
+      .row { gap: 12px; padding: 12px 12px; }
+      .pill-sub { padding: 0 11px; }
+      .email-field { padding-left: 12px; }
+      .copy { padding: 0 12px; }
+    }
+
+    @media (min-width: 960px) {
+      :root { --gutter: 32px; }
+      .page {
+        max-width: 1040px;
+        padding-top: 56px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+        grid-template-areas:
+          "hero      feature"
+          "values    feature"
+          "platforms feature"
+          "contact   feature"
+          "footer    footer";
+        column-gap: 64px; row-gap: 36px;
+        align-items: start;
+      }
+      .hero { text-align: left; padding-top: 0; }
+      .share { top: 0; }
+      .logo { margin: 0; width: 280px; }
+      .lede { margin-left: 0; }
+      .hero-actions { grid-auto-flow: column; justify-content: start; align-items: center; gap: 16px; }
+      .feature { position: sticky; top: 32px; }
+      .rail { margin: 0; padding: 0; grid-auto-columns: calc((100% - 30px) / 4); }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="logo" viewBox="252 466 566 166">
+        <g fill="#F1FF0A">
+          <path d="M727.913 550.128C727.913 538.608 731.945 529.104 740.009 521.616C748.073 514.128 757.289 510.384 767.657 510.384C778.025 510.384 787.193 514.128 795.161 521.616C803.129 529.008 807.113 538.464 807.113 549.984C807.113 557.952 805.049 565.056 800.921 571.296C796.793 577.44 791.753 582 785.801 584.976C779.945 587.856 773.849 589.296 767.513 589.296C761.177 589.296 755.033 587.76 749.081 584.688C743.129 581.52 738.089 576.912 733.961 570.864C729.929 564.72 727.913 557.808 727.913 550.128ZM758.009 560.496C761.081 562.8 764.201 563.952 767.369 563.952C770.537 563.952 773.705 562.752 776.873 560.352C780.041 557.952 781.625 554.4 781.625 549.696C781.625 544.992 780.137 541.488 777.161 539.184C774.185 536.88 770.969 535.728 767.513 535.728C764.057 535.728 760.841 536.928 757.865 539.328C754.889 541.728 753.401 545.28 753.401 549.984C753.401 554.592 754.937 558.096 758.009 560.496Z"/>
+          <path d="M712.409 512.256C719.033 512.256 722.921 514.08 724.073 517.728C724.649 519.552 724.937 521.952 724.937 524.928C724.937 527.904 724.601 530.304 723.929 532.128C723.353 533.856 722.393 535.104 721.049 535.872C719.033 537.024 716.105 537.6 712.265 537.6L703.049 537.024V575.616C703.049 579.264 702.569 582 701.609 583.824C700.745 585.552 699.353 586.704 697.433 587.28C695.609 587.856 693.209 588.144 690.233 588.144C687.257 588.144 684.857 587.856 683.033 587.28C681.305 586.608 680.057 585.6 679.289 584.256C678.521 582.816 678.041 581.52 677.849 580.368C677.753 579.216 677.705 577.536 677.705 575.328V537.168H672.521C670.025 536.976 668.249 536.4 667.193 535.44C665.369 533.616 664.457 530.112 664.457 524.928C664.457 517.056 667.289 513.12 672.953 513.12H677.705V505.488C677.705 498.096 680.345 491.424 685.625 485.472C690.905 479.424 698.537 476.4 708.521 476.4C710.729 476.4 712.361 476.496 713.417 476.688C714.569 476.784 715.865 477.216 717.305 477.984C719.897 479.232 721.193 482.928 721.193 489.072C721.193 493.68 720.377 496.992 718.745 499.008C717.401 500.544 715.289 501.408 712.409 501.6C711.545 501.6 710.201 501.6 708.377 501.6C704.825 501.6 703.049 502.8 703.049 505.2V513.12L712.409 512.256Z"/>
+          <path d="M611.927 603.408C612.983 602.832 613.895 602.496 614.663 602.4C615.527 602.304 616.871 602.256 618.695 602.256C620.519 602.256 622.439 601.152 624.455 598.944C626.567 596.832 628.535 593.664 630.359 589.44C634.391 579.936 636.407 566.304 636.407 548.544C636.407 539.808 635.783 531.888 634.535 524.784C633.383 517.584 631.895 511.92 630.071 507.792C626.135 499.248 622.295 494.976 618.551 494.976H617.687C615.095 494.976 613.223 494.688 612.071 494.112C610.151 493.056 609.191 490.416 609.191 486.192C609.191 481.872 609.959 479.184 611.495 478.128C613.031 476.976 615.335 476.4 618.407 476.4C625.223 476.4 631.271 478.752 636.551 483.456C641.831 488.064 646.007 494.112 649.079 501.6C655.031 516.288 658.007 532.032 658.007 548.832C658.007 565.728 654.887 581.568 648.647 596.352C645.575 603.552 641.399 609.408 636.119 613.92C630.935 618.528 625.079 620.832 618.551 620.832C613.655 620.832 610.775 619.488 609.911 616.8C609.431 615.552 609.191 613.824 609.191 611.616C609.191 609.408 609.383 607.632 609.767 606.288C610.247 604.944 610.967 603.984 611.927 603.408Z"/>
+          <path d="M567.655 512.112C577.255 512.112 585.223 515.808 591.559 523.2C597.991 530.496 601.207 539.424 601.207 549.984V575.328C601.207 577.536 601.111 579.216 600.919 580.368C600.823 581.424 600.439 582.624 599.767 583.968C598.423 586.56 594.679 587.856 588.535 587.856C581.719 587.856 577.783 586.08 576.727 582.528C576.151 580.896 575.863 578.448 575.863 575.184V549.84C575.863 545.904 574.711 542.832 572.407 540.624C570.199 538.416 567.175 537.312 563.335 537.312C559.591 537.312 556.519 538.464 554.119 540.768C551.815 543.072 550.663 546.096 550.663 549.84V575.328C550.663 577.536 550.567 579.216 550.375 580.368C550.279 581.424 549.847 582.624 549.079 583.968C547.831 586.56 544.135 587.856 537.991 587.856C531.943 587.856 528.247 586.56 526.903 583.968C526.231 582.528 525.799 581.28 525.607 580.224C525.511 579.072 525.463 577.392 525.463 575.184V524.208C525.463 522.096 525.511 520.512 525.607 519.456C525.799 518.304 526.279 517.056 527.047 515.712C528.391 513.312 532.087 512.112 538.135 512.112C543.991 512.112 547.591 513.216 548.935 515.424C549.895 517.056 550.375 519.024 550.375 521.328C550.759 520.656 551.623 519.696 552.967 518.448C554.311 517.2 555.607 516.192 556.855 515.424C560.119 513.216 563.719 512.112 567.655 512.112Z"/>
+          <path d="M488.76 524.784C488.76 522.576 488.808 520.944 488.904 519.888C489.096 518.736 489.528 517.44 490.2 516C491.544 513.504 495.288 512.256 501.432 512.256C506.04 512.256 509.304 513.072 511.224 514.704C512.856 516.048 513.72 518.112 513.816 520.896C513.912 521.856 513.96 523.248 513.96 525.072V575.472C513.96 577.68 513.864 579.36 513.672 580.512C513.576 581.568 513.144 582.816 512.376 584.256C511.128 586.752 507.432 588 501.288 588C495.24 588 491.544 586.704 490.2 584.112C489.528 582.672 489.096 581.424 488.904 580.368C488.808 579.312 488.76 577.632 488.76 575.328V524.784ZM512.376 498.144C511.704 499.488 510.456 500.448 508.632 501.024C506.808 501.6 504.36 501.888 501.288 501.888C498.312 501.888 495.912 501.6 494.088 501.024C492.264 500.448 490.968 499.44 490.2 498C489.528 496.56 489.096 495.312 488.904 494.256C488.808 493.104 488.76 491.424 488.76 489.216C488.76 487.008 488.808 485.376 488.904 484.32C489.096 483.168 489.528 481.92 490.2 480.576C491.544 477.984 495.288 476.688 501.432 476.688C507.48 476.688 511.128 477.984 512.376 480.576C513.144 482.016 513.576 483.312 513.672 484.464C513.864 485.52 513.96 487.152 513.96 489.36C513.96 491.568 513.864 493.248 513.672 494.4C513.576 495.456 513.144 496.704 512.376 498.144Z"/>
+          <path d="M479.365 541.056C479.365 546.912 477.877 551.28 474.901 554.16C472.021 556.944 468.805 558.336 465.253 558.336H431.125C431.125 561.024 432.709 563.28 435.877 565.104C439.045 566.928 442.213 567.84 445.381 567.84C450.949 567.84 455.317 567.264 458.485 566.112L460.069 565.536C462.373 564.48 464.293 563.952 465.829 563.952C468.901 563.952 471.541 566.112 473.749 570.432C474.997 573.024 475.621 575.232 475.621 577.056C475.621 585.6 465.397 589.872 444.949 589.872C437.845 589.872 431.509 588.672 425.941 586.272C420.469 583.776 416.197 580.512 413.125 576.48C407.077 568.704 404.053 560.016 404.053 550.416C404.053 538.32 407.941 528.672 415.717 521.472C423.589 514.176 433.381 510.528 445.093 510.528C458.437 510.528 468.229 515.232 474.469 524.64C477.733 529.632 479.365 535.104 479.365 541.056ZM448.981 545.232C452.629 545.232 454.453 543.696 454.453 540.624C454.453 538.416 453.589 536.64 451.861 535.296C450.229 533.952 447.829 533.28 444.661 533.28C441.589 533.28 438.517 534.576 435.445 537.168C432.373 539.664 430.837 542.352 430.837 545.232H448.981Z"/>
+          <path d="M361.074 512.4C370.674 512.4 378.642 516.048 384.978 523.344C391.41 530.64 394.626 539.568 394.626 550.128V575.472C394.626 577.68 394.53 579.36 394.338 580.512C394.242 581.568 393.81 582.816 393.042 584.256C391.794 586.752 388.098 588 381.954 588C376.098 588 372.45 586.752 371.01 584.256C370.242 582.816 369.762 581.52 369.57 580.368C369.474 579.216 369.426 577.488 369.426 575.184V549.984C369.426 546.048 368.322 542.976 366.114 540.768C363.906 538.56 361.074 537.456 357.618 537.456C354.258 537.456 351.282 538.512 348.69 540.624C346.098 542.64 344.61 544.944 344.226 547.536V575.472C344.226 577.68 344.13 579.36 343.938 580.512C343.842 581.568 343.41 582.816 342.642 584.256C341.394 586.752 337.698 588 331.554 588C325.506 588 321.81 586.704 320.466 584.112C319.794 582.672 319.362 581.424 319.17 580.368C319.074 579.312 319.026 577.632 319.026 575.328V489.216C319.026 487.008 319.074 485.376 319.17 484.32C319.362 483.168 319.794 481.92 320.466 480.576C321.81 477.984 325.554 476.688 331.698 476.688C337.746 476.688 341.394 477.984 342.642 480.576C343.41 482.016 343.842 483.312 343.938 484.464C344.13 485.52 344.226 487.152 344.226 489.36V521.184C349.026 515.328 354.642 512.4 361.074 512.4Z"/>
+          <path d="M289.968 589.44C291.792 593.664 293.712 596.832 295.728 598.944C297.84 601.152 299.808 602.256 301.632 602.256C303.456 602.256 304.752 602.304 305.52 602.4C306.384 602.496 307.296 602.832 308.256 603.408C309.312 603.984 310.032 604.944 310.416 606.288C310.896 607.632 311.136 609.408 311.136 611.616C311.136 613.824 310.896 615.552 310.416 616.8C310.032 618.144 309.312 619.104 308.256 619.68C306.624 620.448 304.464 620.832 301.776 620.832C295.248 620.832 289.344 618.528 284.064 613.92C278.88 609.408 274.752 603.552 271.68 596.352C265.44 581.568 262.32 565.728 262.32 548.832C262.32 532.032 265.296 516.288 271.248 501.6C274.32 494.112 278.496 488.064 283.776 483.456C289.056 478.752 295.104 476.4 301.92 476.4C304.8 476.4 306.864 476.736 308.112 477.408C310.128 478.656 311.136 481.44 311.136 485.76C311.136 490.272 310.272 492.96 308.544 493.824C307.2 494.592 305.232 494.976 302.64 494.976H301.776C298.032 494.976 294.192 499.248 290.256 507.792C288.432 511.92 286.896 517.584 285.648 524.784C284.496 531.888 283.92 539.856 283.92 548.688C283.92 557.52 284.496 565.488 285.648 572.592C286.8 579.696 288.24 585.312 289.968 589.44Z"/>
+        </g>
+      </symbol>
+
+      <!-- Icônes -->
+      <symbol id="i-yt" viewBox="0 0 24 24"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></symbol>
+      <symbol id="i-tt" viewBox="0 0 24 24"><path fill="currentColor" d="M12.53.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></symbol>
+      <symbol id="i-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></g><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></symbol>
+      <symbol id="i-chev" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M7 4.6v14.8a1 1 0 0 0 1.5.86l12-7.4a1 1 0 0 0 0-1.72l-12-7.4A1 1 0 0 0 7 4.6z"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></g></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></g></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></g></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/></g></symbol>
+      <symbol id="i-source" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z"/><path d="m8.8 12.2 2.2 2.2 4.4-4.6"/></g></symbol>
+      <symbol id="i-brain" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5a3 3 0 0 0-3 3v.2A3.2 3.2 0 0 0 4 9.9a3.3 3.3 0 0 0 .9 2.3 3.4 3.4 0 0 0 1.6 5.6 3 3 0 0 0 3 2.7 2.5 2.5 0 0 0 2.5-2.5V6a2.5 2.5 0 0 0-2.5-2.5z"/><path d="M14.5 3.5a3 3 0 0 1 3 3v.2a3.2 3.2 0 0 1 2.5 3.2 3.3 3.3 0 0 1-.9 2.3 3.4 3.4 0 0 1-1.6 5.6 3 3 0 0 1-3 2.7A2.5 2.5 0 0 1 12 18V6a2.5 2.5 0 0 1 2.5-2.5z"/></g></symbol>
+    </defs>
+  </svg>
+
+  <div class="page">
+
+    <!-- ================= Hero ================= -->
+    <header class="hero reveal">
+      <button class="share" type="button" id="share" aria-label="Partager la page">
+        <svg><use href="#i-share"/></svg>
+      </button>
+
+      <a class="announce" href="#a-la-une">
+        <span class="tag"><span class="dot" aria-hidden="true"></span>Nouvel épisode</span>
+        <span id="announce-time">Disponible maintenant</span>
+        <svg aria-hidden="true"><use href="#i-arrow"/></svg>
+      </a>
+
+      <h1 style="margin:0">
+        <svg class="logo" viewBox="0 0 566 166" role="img" aria-label="(hein)fo"><use href="#logo"/></svg>
+      </h1>
+      <p class="headline">L'info avec un grand <em>HEIN&nbsp;?</em></p>
+      <p class="lede">Décryptages courts, clairs et sourcés en 1&nbsp;minute. Ton allié pour une culture générale solide.</p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" data-app="youtube" data-sub="1" href="https://www.youtube.com/@hein.f0?sub_confirmation=1" target="_blank" rel="noopener">
+          <svg aria-hidden="true"><use href="#i-yt"/></svg>S'abonner sur YouTube
+        </a>
+        <nav class="socials" aria-label="Réseaux sociaux">
+          <a class="social-btn" data-app="youtube" href="https://www.youtube.com/@hein.f0" target="_blank" rel="noopener" aria-label="YouTube"><svg><use href="#i-yt"/></svg></a>
+          <a class="social-btn" data-app="tiktok" href="https://www.tiktok.com/@hein.fo" target="_blank" rel="noopener" aria-label="TikTok"><svg><use href="#i-tt"/></svg></a>
+          <a class="social-btn" data-app="instagram" href="https://www.instagram.com/hein.f0/" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-ig"/></svg></a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ================= À la une ================= -->
+    <section class="feature reveal" id="a-la-une" aria-labelledby="feat-title">
+      <div class="section-head">
+        <h2 class="eyebrow">À la une</h2>
+        <a class="link-more" data-app="youtube" data-path="/shorts" href="https://www.youtube.com/@hein.f0/shorts" target="_blank" rel="noopener">
+          Tous les Shorts <svg aria-hidden="true"><use href="#i-chev"/></svg>
+        </a>
+      </div>
+
+      <div class="feature-card">
+        <!-- Dernier Short récupéré automatiquement (flux RSS). data-video-id = secours. -->
+        <div class="media" id="player" data-video-id="q4iPOxxUFI4">
+          <button class="poster" type="button" id="poster" aria-label="Lire la vidéo">
+            <span class="poster-top">
+              <span class="chip chip-accent">Nouveau</span>
+              <span class="chip chip-glass"><svg aria-hidden="true"><use href="#i-clock"/></svg>1 min</span>
+            </span>
+            <span class="poster-body">
+              <span class="poster-title" id="feat-title">Vous le saviez qu'auparavant Coca-Cola était un médicament ? 🥤</span>
+              <span class="poster-meta">
+                <span class="play" aria-hidden="true"><svg><use href="#i-play"/></svg></span>
+                <span><strong>Regarder l'épisode</strong><span id="feat-date">YouTube Shorts</span></span>
+              </span>
+            </span>
+          </button>
+          <noscript>
+            <iframe src="https://www.youtube-nocookie.com/embed/q4iPOxxUFI4" title="Dernier épisode (hein)fo"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+          </noscript>
+        </div>
+      </div>
+
+      <div class="recent" id="recent" hidden>
+        <h3 class="eyebrow">Derniers épisodes</h3>
+        <div class="rail" id="rail" role="list"></div>
+      </div>
+    </section>
+
+    <!-- ================= Valeurs ================= -->
+    <section class="values" aria-label="Notre promesse">
+      <div class="values-grid">
+        <div class="value">
+          <svg aria-hidden="true"><use href="#i-clock"/></svg>
+          <strong>1 min</strong>
+          <span>Court et efficace</span>
+        </div>
+        <div class="value">
+          <svg aria-hidden="true"><use href="#i-source"/></svg>
+          <strong>Sourcé</strong>
+          <span>Clair et vérifié</span>
+        </div>
+        <div class="value">
+          <svg aria-hidden="true"><use href="#i-brain"/></svg>
+          <strong>Culture G</strong>
+          <span>Solide, accessible</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Plateformes ================= -->
+    <section class="platforms" aria-labelledby="pf-title">
+      <div class="section-head"><h2 class="eyebrow" id="pf-title">Suivre (hein)fo</h2></div>
+      <p class="platform-note">Les mêmes décryptages, sur ta plateforme préférée.</p>
+      <div class="list">
+        <a class="row" data-app="youtube" data-sub="1" href="https://www.youtube.com/@hein.f0?sub_confirmation=1" target="_blank" rel="noopener">
+          <span class="row-ico" aria-hidden="true"><svg><use href="#i-yt"/></svg></span>
+          <span class="row-text"><strong>YouTube Shorts</strong><span>@hein.f0</span></span>
+          <span class="pill-sub">S'abonner</span>
+        </a>
+        <a class="row" data-app="tiktok" href="https://www.tiktok.com/@hein.fo" target="_blank" rel="noopener">
+          <span class="row-ico" aria-hidden="true"><svg><use href="#i-tt"/></svg></span>
+          <span class="row-text"><strong>TikTok</strong><span>@hein.fo</span></span>
+          <span class="row-end" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+        </a>
+        <a class="row" data-app="instagram" href="https://www.instagram.com/hein.f0/" target="_blank" rel="noopener">
+          <span class="row-ico" aria-hidden="true"><svg><use href="#i-ig"/></svg></span>
+          <span class="row-text"><strong>Instagram</strong><span>@hein.f0</span></span>
+          <span class="row-end" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= Contact ================= -->
+    <section class="contact" aria-labelledby="contact-title">
+      <div class="section-head"><h2 class="eyebrow">Contact &amp; propositions</h2></div>
+      <div class="contact-card">
+        <h3 id="contact-title">Un sujet, une info, un partenariat&nbsp;?</h3>
+        <p>Une proposition de sujet ou une collaboration : écris-nous, on lit tout.</p>
+        <div class="email-field">
+          <span class="addr" id="email">hein.fo92@gmail.com</span>
+          <button class="copy" type="button" id="copy" aria-describedby="email">
+            <svg class="i-copy" aria-hidden="true"><use href="#i-copy"/></svg>
+            <svg class="i-ok" aria-hidden="true"><use href="#i-check"/></svg>
+            <span class="txt">Copier</span>
+          </button>
+        </div>
+        <a class="mailto" href="mailto:hein.fo92@gmail.com"><svg aria-hidden="true"><use href="#i-mail"/></svg>Ou ouvrir ma messagerie</a>
+        <span class="sr-only" aria-live="polite" id="copy-status"></span>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>© <span id="y">2026</span> (hein)fo — Tous droits réservés</span>
+      <svg viewBox="0 0 566 166" role="img" aria-label="(hein)fo"><use href="#logo"/></svg>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      /* ---------- Configuration ---------- */
+      const CONFIG = {
+        channelId: 'UCi1Zc36aAjEhj9m2wlgYiWQ',   // @hein.f0
+        handles: { youtube: 'hein.f0', tiktok: 'hein.fo', instagram: 'hein.f0' },
+        email: 'hein.fo92@gmail.com'
+      };
+
+      const $ = s => document.querySelector(s);
+      $('#y').textContent = new Date().getFullYear();
+
+      const toast = (() => {
+        const el = $('#toast'); let t;
+        return msg => { el.textContent = msg; el.classList.add('show'); clearTimeout(t); t = setTimeout(() => el.classList.remove('show'), 2200); };
+      })();
+
+      /* ---------- À la une : dernier Short + épisodes précédents ---------- */
+      const player = $('#player');
+      const poster = $('#poster');
+      const titleEl = $('#feat-title');
+      const dateEl = $('#feat-date');
+      const rail = $('#rail');
+      let current = player.dataset.videoId;
+
+      const thumb = (vid, cb) => {
+        const img = new Image();
+        img.onload = () => cb(img.src);
+        img.onerror = () => cb(`https://i.ytimg.com/vi/${vid}/hqdefault.jpg`);
+        img.src = `https://i.ytimg.com/vi/${vid}/oardefault.jpg`;   // vertical 1080×1920
+      };
+      const cleanTitle = t => t.replace(/\s*#[^\s#]+/g, '').trim();
+      const toDate = s => new Date(/[zZ+]/.test(s.slice(10)) ? s : s.replace(' ', 'T') + 'Z');
+      const ago = s => {
+        const sec = (Date.now() - toDate(s)) / 1000;
+        const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' });
+        if (sec < 3600) return rtf.format(-Math.max(1, Math.round(sec / 60)), 'minute');
+        if (sec < 86400) return rtf.format(-Math.round(sec / 3600), 'hour');
+        if (sec < 86400 * 30) return rtf.format(-Math.round(sec / 86400), 'day');
+        return toDate(s).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+      };
+
+      const resetPlayer = () => {
+        const f = player.querySelector('iframe');
+        if (f) { f.remove(); player.classList.remove('is-playing'); player.prepend(poster); }
+      };
+      const show = item => {
+        resetPlayer();
+        current = item.id;
+        thumb(item.id, src => { poster.style.backgroundImage = `url(${src})`; });
+        titleEl.textContent = item.title;
+        if (item.date) dateEl.textContent = `Publié ${ago(item.date)}`;
+        rail.querySelectorAll('.thumb').forEach(b => b.setAttribute('aria-current', b.dataset.id === item.id));
+      };
+
+      thumb(current, src => { poster.style.backgroundImage = `url(${src})`; });
+
+      poster.addEventListener('click', () => {
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${current}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+        f.title = titleEl.textContent;
+        f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        f.referrerPolicy = 'strict-origin-when-cross-origin';
+        f.allowFullscreen = true;
+        player.classList.add('is-playing');
+        poster.replaceWith(f);
+      });
+
+      const feed = `https://www.youtube.com/feeds/videos.xml?channel_id=${CONFIG.channelId}`;
+      fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed)}`, { signal: AbortSignal.timeout?.(6000) })
+        .then(r => r.json())
+        .then(data => {
+          const items = (data.items || []).map(v => ({
+            id: v.guid?.split(':').pop() || v.link?.match(/(?:v=|shorts\/)([\w-]{11})/)?.[1],
+            title: cleanTitle(v.title || ''),
+            date: v.pubDate
+          })).filter(i => i.id);
+          if (!items.length) return;
+
+          $('#announce-time').textContent = `Publié ${ago(items[0].date)}`;
+          if (!player.querySelector('iframe')) show(items[0]);
+
+          const list = items.slice(0, 7);
+          rail.replaceChildren(...list.map(it => {
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = 'thumb'; b.dataset.id = it.id;
+            b.setAttribute('role', 'listitem');
+            b.setAttribute('aria-current', it.id === current);
+            b.setAttribute('aria-label', `Lire : ${it.title}`);
+            b.innerHTML = `<div class="thumb-img"></div><p class="thumb-title"></p>`;
+            b.querySelector('.thumb-title').textContent = it.title;
+            thumb(it.id, src => { b.querySelector('.thumb-img').style.backgroundImage = `url(${src})`; });
+            b.addEventListener('click', () => {
+              show(it);
+              player.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+            return b;
+          }));
+          $('#recent').hidden = list.length < 2;
+        })
+        .catch(() => {});   // flux injoignable : la vidéo de secours reste affichée
+
+      /* ---------- Deep linking vers les apps natives ---------- */
+      const ua = navigator.userAgent;
+      const isAndroid = /Android/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      const ytPath = (h, a) => `www.youtube.com/@${h}${a.dataset.path || ''}${a.dataset.sub ? '?sub_confirmation=1' : ''}`;
+      const web = {
+        youtube:   (h, a) => `https://${ytPath(h, a)}`,
+        tiktok:    h => `https://www.tiktok.com/@${h}`,
+        instagram: h => `https://www.instagram.com/${h}/`
+      };
+      const ios = {
+        youtube:   (h, a) => `youtube://${ytPath(h, a)}`,
+        tiktok:    h => `snssdk1233://user/profile/@${h}`,
+        instagram: h => `instagram://user?username=${h}`
+      };
+      const androidPkg = { youtube: 'com.google.android.youtube', tiktok: 'com.zhiliaoapp.musically', instagram: 'com.instagram.android' };
+      const intent = (url, pkg) => {
+        const u = new URL(url);
+        return `intent://${u.host}${u.pathname}${u.search}#Intent;scheme=https;package=${pkg};S.browser_fallback_url=${encodeURIComponent(url)};end`;
+      };
+
+      document.querySelectorAll('[data-app]').forEach(a => {
+        const app = a.dataset.app, h = CONFIG.handles[app];
+        const fallback = web[app](h, a);
+        a.href = fallback;
+        a.addEventListener('click', e => {
+          if (!isAndroid && !isIOS) return;
+          e.preventDefault();
+          if (isAndroid) { location.href = intent(fallback, androidPkg[app]); return; }
+          const t = setTimeout(() => { location.href = fallback; }, 1200);
+          document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(t); }, { once: true });
+          window.addEventListener('pagehide', () => clearTimeout(t), { once: true });
+          location.href = ios[app](h, a);
+        });
+      });
+
+      /* ---------- Copie ---------- */
+      const copyText = async text => {
+        try { await navigator.clipboard.writeText(text); }
+        catch {
+          const ta = document.createElement('textarea');
+          ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;opacity:0';
+          document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); } finally { ta.remove(); }
+        }
+      };
+
+      const btn = $('#copy'), txt = btn.querySelector('.txt'), status = $('#copy-status');
+      let timer;
+      btn.addEventListener('click', async () => {
+        await copyText(CONFIG.email);
+        btn.classList.add('done'); txt.textContent = 'Copié !'; status.textContent = 'Adresse e-mail copiée';
+        navigator.vibrate?.(15);
+        clearTimeout(timer);
+        timer = setTimeout(() => { btn.classList.remove('done'); txt.textContent = 'Copier'; status.textContent = ''; }, 2000);
+      });
+
+      /* ---------- Partage ---------- */
+      $('#share').addEventListener('click', async () => {
+        const data = { title: document.title, text: "(hein)fo — L'info avec un grand HEIN ?", url: location.href };
+        if (navigator.share) { try { await navigator.share(data); } catch {} return; }
+        await copyText(location.href);
+        toast('Lien copié');
+      });
+    })();
+  </script>
+</body>
+</html>
